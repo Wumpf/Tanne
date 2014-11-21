@@ -1,0 +1,42 @@
+﻿body {
+  font-family: 'Segoe UI', sans-serif;
+  color: white;
+  overflow: hidden;
+  background: black;
+}
+
+#editor {
+  bottom: 0;
+  left: 0;
+  margin-right: 300px;
+  position: absolute;
+  right: 0;
+  top: 0;
+  width: auto;
+}
+
+#code {
+  margin: 0;
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+}
+
+#display {
+  border-left: 5px;
+  position: absolute;
+  right: 0;
+  display: inline-block;
+}
+
+#display span {
+  clear: both;
+  display: inline-block;
+}
+
+
+canvas {
+  background: white;
+}
