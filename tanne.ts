@@ -3,6 +3,7 @@
 class Tanne {
     static codeEditor = ace.edit("code");
     static numLevels = 0;
+    static illegalKeywords = ["document", "window"];
 
     private userCanvas: HTMLCanvasElement;
     private referenceCanvas: HTMLCanvasElement;
@@ -13,6 +14,7 @@ class Tanne {
 
     private goalError: number;
     private levelName: string;
+
 
     constructor() {
         //Tanne.codeEditor.on("paste", (e: any) => e.text = ""); // pasting not allowed :P
@@ -130,7 +132,17 @@ class Tanne {
     }
 
     updateUserCanvas() {
-        var drawFunction: any = new Function("canvas", Tanne.codeEditor.getValue());
+        // Validate user code.
+        var userCode = Tanne.codeEditor.getValue();
+        for (var i = 0; i < Tanne.illegalKeywords.length; ++i) {
+            if (userCode.indexOf(Tanne.illegalKeywords[i]) > 0) {
+                alert("\"" + Tanne.illegalKeywords[i] + "\" not allowed!");
+                return;
+            }
+        }
+
+        // Execute user code.
+        var drawFunction: any = new Function("canvas", userCode);
         var userFunction = new drawFunction(this.userCanvas);
         (<HTMLSpanElement>document.getElementById("errorGoal")).innerHTML = (this.goalError * 100).toFixed(1) + "%";
 
