@@ -10,7 +10,9 @@ class Tanne {
     private nonEditAreas: NonEditableArea[];
 
     private levelNumber: number = -1;
+
     private goalError: number;
+    private levelName: string;
 
     constructor() {
         //Tanne.codeEditor.on("paste", (e: any) => e.text = ""); // pasting not allowed :P
@@ -43,9 +45,6 @@ class Tanne {
         // See: http://japhr.blogspot.de/2012/10/ace-undomanager-and-setvalue.html
         var UndoManager = ace.require("ace/undomanager").UndoManager;
         Tanne.codeEditor.getSession().setUndoManager(new UndoManager());
-        
-        // Initial draw.
-        this.updateUserCanvas();
 
         // Update reference image and trigger initial draw.
         var image = new Image();
@@ -100,6 +99,9 @@ class Tanne {
 
         // Set processed code.
         Tanne.codeEditor.setValue(processedCode);
+
+        // Set header.
+        (<HTMLElement>document.getElementById("levelName")).innerHTML = this.levelName;
 
         // Setup non editable areas.
         for (var i = 0; i < pendingNonEditAreaStart.length; ++i)

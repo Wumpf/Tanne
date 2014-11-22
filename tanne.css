@@ -5,6 +5,11 @@ body {
     font-family: "Segoe UI",sans-serif;
     overflow: hidden;
 }
+h1 {
+  font-family: "Rambla",sans-serif;
+  margin-left: 10px;
+  margin-top: 5px;
+}
 #editor {
     bottom: 0;
     left: 0;
@@ -33,7 +38,7 @@ body {
     margin: 0;
     position: absolute;
     right: 0;
-    top: 0;
+    top: 50px;
 }
 #refreshbutton {
     height: 40px;

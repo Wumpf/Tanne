@@ -1,4 +1,5 @@
 //** this.goalError = 0.01;
+//** this.levelName = "1 - A Missing Piece";
 // Useful for all kind of positioning!
 function Pos(x, y) {
   this.x = x; this.y = y;

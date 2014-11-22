@@ -1,4 +1,5 @@
 //** this.goalError = 0.03;
+//** this.levelName = "2 - Colorful";
 function Pos(x, y) {
   this.x = x; this.y = y;
 }

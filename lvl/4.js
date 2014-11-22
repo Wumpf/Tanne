@@ -1,4 +1,5 @@
 //** this.goalError = 0.01;
+//** this.levelName = "5 - A Little Twist";
 function Pos(x, y) {
   this.x = x; this.y = y;
 }

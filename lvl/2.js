@@ -1,4 +1,5 @@
 //** this.goalError = 0.01;
+//** this.levelName = "3 - Trunk";
 function Pos(x, y) {
   this.x = x; this.y = y;
 }
@@ -36,7 +37,7 @@ function Draw() {
 var draw = new Draw();
 canvas = null;
 
-function drawSomethinkLikeATree() {
+function drawTree() {
   //##
   draw.triangle(new Pos(150, 100), new Pos(250, 250), new Pos(50, 250), "#00AA00");
   draw.triangle(new Pos(150, 50), new Pos(225, 175), new Pos(75, 175), "#00CC00");
@@ -45,4 +46,4 @@ function drawSomethinkLikeATree() {
   draw.rectangle(new Pos(50, 250), 200, 50, "#FF9001");
 }
 
-drawSomethinkLikeATree();
+drawTree();
