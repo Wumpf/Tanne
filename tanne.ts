@@ -45,11 +45,11 @@ class Tanne {
 
         // Update reference image and trigger initial draw.
         var image = new Image();
-        image.src = "lvl/" + this.levelNumber + ".png";
         image.onload = () => {
             this.referenceCanvas.getContext("2d").drawImage(image, 0, 0, this.referenceCanvas.width, this.referenceCanvas.height);
             this.updateUserCanvas();
         };
+        image.src = "lvl/" + this.levelNumber + ".png";
     }
 
     private loadLevelFile(levelNumber: number) {
@@ -150,7 +150,7 @@ class Tanne {
 
     winLevel() {
         alert("You won!");
-        this.nextLevel(this.levelNumber + 1);
+        this.nextLevel();
     }
 }
 

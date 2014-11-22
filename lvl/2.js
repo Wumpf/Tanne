@@ -1,12 +1,11 @@
-//** this.goalError = 0.05;
-// Useful for all kind of positioning!
+//** this.goalError = 0.01;
 function Pos(x, y) {
   this.x = x; this.y = y;
 }
 
 // A bunch of useful draw function, just for you.
 function Draw() {
-    // Draws a green triangle - Everything you ever wanted!
+    // Draws a green triangle.
     // (Pos) p0, p1, p2: Positions in clockwise order
     this.greenTriangle = function(p0, p1, p2) {
       ctx.fillStyle = "#00E000";
@@ -35,9 +34,7 @@ function Draw() {
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 }
 
-// This is your friend!
 var draw = new Draw();
-// ... but you are not allowed to access the canvas directly ;)
 canvas = null;
 
 function drawTree() {
