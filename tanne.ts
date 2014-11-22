@@ -14,6 +14,7 @@ class Tanne {
 
     constructor() {
         //Tanne.codeEditor.on("paste", (e: any) => e.text = ""); // pasting not allowed :P
+        Tanne.codeEditor.setShowPrintMargin(false);
         Tanne.codeEditor.selection.on("changeCursor", () => this.onCodeEditCursorChanged());
         Tanne.codeEditor.selection.on("changeSelection", () => this.onCodeEditCursorChanged());
         
