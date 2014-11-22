@@ -18,10 +18,15 @@
 #code {
   margin: 0;
   position: absolute;
-  top: 0;
+  top: 40px;
   right: 0;
   bottom: 0;
   left: 0;
+}
+
+#refreshbutton {
+  margin: 5px;
+  position: absolute;
 }
 
 #display {

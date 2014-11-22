@@ -1,23 +1,7 @@
 function draw(canvas) {
   //##
-  // put some code in here!
-  //1
-  //2
-  //3
-  //4
-  //5
+  var ctx = canvas.getContext('2d');
+  ctx.fillStyle = "#FF0000";
+  ctx.fillRect(25, 25, 100, 100);
   //##
-  // blab
-  // This is not editable
-  // Blub
-  //##
-  // editable again
-  // editable again
-  // editable again
-  //##
-  // wusel
-  //##
-  // editable again
-  //##
-  // THE END
 }

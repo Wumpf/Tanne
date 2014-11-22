@@ -16,6 +16,7 @@ class Tanne {
         Tanne.codeEditor.setTheme("ace/theme/twilight");
         Tanne.codeEditor.getSession().setMode("ace/mode/javascript");
 
+        (<HTMLInputElement>document.getElementById("refreshbutton")).onclick = () => this.updateUserCanvas();
         this.userCanvas = <HTMLCanvasElement>document.getElementById("playercanvas");
         this.referenceCanvas = <HTMLCanvasElement>document.getElementById("referencecanvas");
 
@@ -23,9 +24,6 @@ class Tanne {
     }
 
     changeLevel(levelNumber: number) {
-        this.userCanvas.getContext("2d").clearRect(0, 0, this.userCanvas.width, this.userCanvas.height);
-        this.referenceCanvas.getContext("2d").clearRect(0, 0, this.referenceCanvas.width, this.referenceCanvas.height);
-        
         // Reset non-editable areas.
         if (typeof this.nonEditAreas !== "undefined") {
             this.nonEditAreas.forEach(s => s.remove());
@@ -73,6 +71,11 @@ class Tanne {
         // See: http://japhr.blogspot.de/2012/10/ace-undomanager-and-setvalue.html
         var UndoManager = ace.require("ace/undomanager").UndoManager;
         Tanne.codeEditor.getSession().setUndoManager(new UndoManager());
+        
+        // Initial draw.
+        this.updateUserCanvas();
+
+        //this.referenceCanvas.getContext("2d").clearRect(0, 0, this.referenceCanvas.width, this.referenceCanvas.height);
     }
 
     onCodeEditCursorChanged() {
@@ -84,6 +87,13 @@ class Tanne {
             if (s.intersectsRange(Tanne.codeEditor.getSelectionRange()) || s.intersectsPosition(Tanne.codeEditor.getCursorPosition()))
                 Tanne.codeEditor.setReadOnly(true);
         });
+    }
+
+    updateUserCanvas() {
+        this.userCanvas.getContext("2d").clearRect(0, 0, this.userCanvas.width, this.userCanvas.height);
+
+        eval(Tanne.codeEditor.getValue());
+        draw(this.userCanvas);
     }
 }
 
