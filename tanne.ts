@@ -15,6 +15,7 @@ class Tanne {
         
         Tanne.codeEditor.setTheme("ace/theme/twilight");
         Tanne.codeEditor.getSession().setMode("ace/mode/javascript");
+        Tanne.codeEditor.getSession().setTabSize(2);
 
         (<HTMLInputElement>document.getElementById("refreshbutton")).onclick = () => this.updateUserCanvas();
         this.userCanvas = <HTMLCanvasElement>document.getElementById("playercanvas");
@@ -92,8 +93,8 @@ class Tanne {
     updateUserCanvas() {
         this.userCanvas.getContext("2d").clearRect(0, 0, this.userCanvas.width, this.userCanvas.height);
 
-        eval(Tanne.codeEditor.getValue());
-        draw(this.userCanvas);
+        var drawFunction = new Function("canvas", Tanne.codeEditor.getValue());
+        drawFunction(this.userCanvas);
     }
 }
 

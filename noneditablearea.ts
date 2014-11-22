@@ -31,7 +31,7 @@ class NonEditableArea {
     private updateHighlight() {
         this.remove();
         this.markerRange = new Range(this.startAnchor.getPosition().row, this.startAnchor.getPosition().column,
-                              this.endAnchor.getPosition().row, this.endAnchor.getPosition().column);
+                                     this.endAnchor.getPosition().row, this.endAnchor.getPosition().column);
         this.aceMarker = Tanne.codeEditor.session.addMarker(this.markerRange, "noneditable", "fullLine", false);
     }
 } 
