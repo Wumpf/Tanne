@@ -9,12 +9,13 @@ class Tanne {
 
     private nonEditAreas: NonEditableArea[];
 
-    private levelNumber: number;
+    private levelNumber: number = -1;
     private goalError: number;
 
     constructor() {
         //Tanne.codeEditor.on("paste", (e: any) => e.text = ""); // pasting not allowed :P
         Tanne.codeEditor.setShowPrintMargin(false);
+        
         Tanne.codeEditor.selection.on("changeCursor", () => this.onCodeEditCursorChanged());
         Tanne.codeEditor.selection.on("changeSelection", () => this.onCodeEditCursorChanged());
         
@@ -26,12 +27,32 @@ class Tanne {
         this.userCanvas = <HTMLCanvasElement>document.getElementById("playercanvas");
         this.referenceCanvas = <HTMLCanvasElement>document.getElementById("referencecanvas");
 
-        this.changeLevel(0);
+        this.nextLevel(0);
     }
 
-    changeLevel(levelNumber: number) {
+    nextLevel(levelNumber: number) {
         this.levelNumber = levelNumber;
+        this.loadLevelFile(levelNumber);
 
+        // Reset undo.
+        // Rather strange behaviour but this works.
+        // See: http://japhr.blogspot.de/2012/10/ace-undomanager-and-setvalue.html
+        var UndoManager = ace.require("ace/undomanager").UndoManager;
+        Tanne.codeEditor.getSession().setUndoManager(new UndoManager());
+        
+        // Initial draw.
+        this.updateUserCanvas();
+
+        // Update reference image and trigger initial draw.
+        var image = new Image();
+        image.src = "lvl/" + levelNumber + ".png";
+        image.onload = () => {
+            this.referenceCanvas.getContext("2d").drawImage(image, 0, 0, this.referenceCanvas.width, this.referenceCanvas.height);
+            this.updateUserCanvas();
+        };
+    }
+
+    private loadLevelFile(levelNumber: number) {
         // Reset non-editable areas.
         if (typeof this.nonEditAreas !== "undefined") {
             this.nonEditAreas.forEach(s => s.remove());
@@ -42,7 +63,7 @@ class Tanne {
         var levelCodeElement = <HTMLIFrameElement>document.getElementById("lvl" + levelNumber);
         var rawLevelCode = <string>levelCodeElement.contentWindow.document.body.childNodes[0].innerHTML;
         var nonEditStart = 0;
-        var nonEditEnd;
+        var nonEditEnd = -1;
         var lines = rawLevelCode.split('\n');
         var processedCode = "";
         var processedCodeLineNum = 0;
@@ -55,7 +76,7 @@ class Tanne {
                 if (nonEditStart < 0) {
                     nonEditStart = processedCodeLineNum;
                 } else {
-                    nonEditEnd = processedCodeLineNum-1;
+                    nonEditEnd = processedCodeLineNum - 1;
                     pendingNonEditAreaStart.push(nonEditStart);
                     pendingNonEditAreaEnd.push(nonEditEnd);
                     nonEditStart = -1;
@@ -82,33 +103,19 @@ class Tanne {
         if (nonEditStart > 0)
             this.nonEditAreas.push(new NonEditableArea(nonEditStart, processedCodeLineNum));
 
-        // Set cursor to a meaningful.
+        // Set cursor to a meaningful position.
         Tanne.codeEditor.selection.clearSelection();
         Tanne.codeEditor.selection.moveCursorToPosition(new function () { this.row = pendingNonEditAreaEnd[pendingNonEditAreaEnd.length - 1] + 1; this.column = 1; });
         Tanne.codeEditor.selection.moveCursorLineEnd();
-
-        // Reset undo.
-        // Rather strange behaviour but this works.
-        // See: http://japhr.blogspot.de/2012/10/ace-undomanager-and-setvalue.html
-        var UndoManager = ace.require("ace/undomanager").UndoManager;
-        Tanne.codeEditor.getSession().setUndoManager(new UndoManager());
-        
-        // Initial draw.
-        this.updateUserCanvas();
-
-        // Update reference image and trigger initial draw.
-        var image = new Image();
-        image.src = "lvl/" + levelNumber + ".png";
-        image.onload = () => {
-            this.referenceCanvas.getContext("2d").drawImage(image, 0, 0, this.referenceCanvas.width, this.referenceCanvas.height);
-            this.updateUserCanvas();
-        };
     }
 
     onCodeEditCursorChanged() {
         if (typeof this.nonEditAreas === "undefined") {
             return;
         }
+
+        Tanne.codeEditor.exitMultiSelectMode();
+
         Tanne.codeEditor.setReadOnly(false);
         this.nonEditAreas.forEach(s => {
             if (s.intersectsRange(Tanne.codeEditor.getSelectionRange()) || s.intersectsPosition(Tanne.codeEditor.getCursorPosition()))
@@ -143,15 +150,10 @@ class Tanne {
 
     winLevel() {
         alert("You won!");
-        this.changeLevel(this.levelNumber + 1);
+        this.nextLevel(this.levelNumber + 1);
     }
 }
 
 function startGame() {
     var game = new Tanne();
 }
-
-// "Content loaded" is not very reliable
-/*document.addEventListener('DOMContentLoaded', function () {
-    var game = new Tanne();
-});*/
