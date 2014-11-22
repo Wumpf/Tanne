@@ -9,7 +9,7 @@ class Tanne {
 
     private nonEditAreas: NonEditableArea[];
 
-    private levelNumber: number = -1;
+    private levelNumber: number = 2;
     private goalError: number;
 
     constructor() {
@@ -25,7 +25,11 @@ class Tanne {
 
         (<HTMLInputElement>document.getElementById("refreshbutton")).onclick = () => this.updateUserCanvas();
         this.userCanvas = <HTMLCanvasElement>document.getElementById("playercanvas");
+        this.userCanvas.onmousemove = (ev) => this.canvasMouseOver(this.userCanvas, ev);
+        this.userCanvas.onclick = (ev) => this.canvasClick(this.userCanvas, ev);
         this.referenceCanvas = <HTMLCanvasElement>document.getElementById("referencecanvas");
+        this.referenceCanvas.onmousemove = (ev) => this.canvasMouseOver(this.referenceCanvas, ev);
+        this.referenceCanvas.onclick = (ev) => this.canvasClick(this.referenceCanvas, ev);
 
         this.nextLevel();
     }
@@ -151,6 +155,22 @@ class Tanne {
     winLevel() {
         alert("You won!");
         this.nextLevel();
+    }
+
+    private canvasMouseOver(canvas: HTMLCanvasElement, mouseOverEvent: MouseEvent) {
+        var rect = canvas.getBoundingClientRect();
+        var x = mouseOverEvent.clientX - rect.left;
+        var y = mouseOverEvent.clientY - rect.top;
+        (<HTMLSpanElement>document.getElementById("hoverPos")).innerHTML = "(" + x + " " + y + ")";
+
+        var pixel = canvas.getContext("2d").getImageData(x, y, 1, 1).data;
+        var hex = "#" + ("000000" + ((pixel[0] << 16) | (pixel[1] << 8) | pixel[2]).toString(16)).slice(-6);
+        (<HTMLSpanElement>document.getElementById("hoverCol")).innerHTML = hex;
+    }
+
+    public canvasClick(canvas: HTMLCanvasElement, mouseDownEvent: MouseEvent) {
+        (<HTMLSpanElement>document.getElementById("clickPos")).innerHTML = (<HTMLSpanElement>document.getElementById("hoverPos")).innerHTML;
+        (<HTMLSpanElement>document.getElementById("clickCol")).innerHTML = (<HTMLSpanElement>document.getElementById("hoverCol")).innerHTML;
     }
 }
 
