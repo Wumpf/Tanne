@@ -15,6 +15,11 @@
   width: auto;
 }
 
+#editor div input {
+  float: left;
+  display: inline-block;
+}
+
 #code {
   margin: 0;
   position: absolute;
@@ -26,7 +31,6 @@
 
 #refreshbutton {
   margin: 5px;
-  position: absolute;
 }
 
 #display {

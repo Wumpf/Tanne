@@ -28,6 +28,9 @@ function Draw() {
 
     // Create a 2D context for the functions above.
     var ctx = canvas.getContext('2d');
+    // Standard background color.
+    ctx.fillStyle = "#424242";
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
 }
 
 // This is your friend!

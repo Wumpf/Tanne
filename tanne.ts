@@ -13,7 +13,7 @@ class Tanne {
         Tanne.codeEditor.selection.on("changeCursor", () => this.onCodeEditCursorChanged());
         Tanne.codeEditor.selection.on("changeSelection", () => this.onCodeEditCursorChanged());
         
-        Tanne.codeEditor.setTheme("ace/theme/twilight");
+        Tanne.codeEditor.setTheme("ace/theme/twilight_modified");
         Tanne.codeEditor.getSession().setMode("ace/mode/javascript");
         Tanne.codeEditor.getSession().setTabSize(2);
 
@@ -68,6 +68,7 @@ class Tanne {
             this.nonEditAreas.push(new NonEditableArea(nonEditStart, processedCodeLineNum));
 
         // Set cursor to a meaningful.
+        Tanne.codeEditor.selection.clearSelection();
         Tanne.codeEditor.selection.moveCursorToPosition(new function () { this.row = pendingNonEditAreaEnd[pendingNonEditAreaEnd.length - 1] + 1; this.column = 1; });
         Tanne.codeEditor.selection.moveCursorLineEnd();
 
@@ -80,7 +81,13 @@ class Tanne {
         // Initial draw.
         this.updateUserCanvas();
 
-        //this.referenceCanvas.getContext("2d").clearRect(0, 0, this.referenceCanvas.width, this.referenceCanvas.height);
+        // Update reference image and trigger initial draw.
+        var image = new Image();
+        image.src = "lvl/" + levelNumber + ".png";
+        image.onload = () => {
+            this.referenceCanvas.getContext("2d").drawImage(image, 0, 0, this.referenceCanvas.width, this.referenceCanvas.height);
+            this.updateUserCanvas();
+        };
     }
 
     onCodeEditCursorChanged() {
@@ -95,10 +102,23 @@ class Tanne {
     }
 
     updateUserCanvas() {
-        this.userCanvas.getContext("2d").clearRect(0, 0, this.userCanvas.width, this.userCanvas.height);
-
         var drawFunction = new Function("canvas", Tanne.codeEditor.getValue());
         drawFunction(this.userCanvas);
+
+        // Compute normalized root-mean-square deviation
+        var pixelsUserCanvas = this.userCanvas.getContext("2d").getImageData(0, 0, this.userCanvas.width, this.userCanvas.height).data;
+        var pixelsReferenceCanvas = this.referenceCanvas.getContext("2d").getImageData(0, 0, this.referenceCanvas.width, this.referenceCanvas.height).data;
+        var nrmsd = 0.0;
+        for (var i = 0, n = pixelsUserCanvas.length; i < n; i += 4) {
+            for (var channel = 0; channel < 3; ++channel) {
+                var diff = pixelsUserCanvas[i + channel] - pixelsReferenceCanvas[i + channel];
+                nrmsd += diff * diff;
+            }
+        }
+        nrmsd /= this.referenceCanvas.width * this.referenceCanvas.height * 3;
+        nrmsd = Math.sqrt(nrmsd);
+        nrmsd /= 255;
+        (<HTMLSpanElement>document.getElementById("imageError")).innerHTML = (nrmsd * 100).toFixed(1) + "%";
     }
 }
 
