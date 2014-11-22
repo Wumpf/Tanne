@@ -1,14 +1,14 @@
-﻿class Tanne {
-    private codeEditor: AceAjax.Editor;
+﻿var Range = ace.require("ace/range").Range;
 
-    private levelNumber: number;
-    private currentLevel: ILevel;
+class Tanne {
+    private codeEditor: AceAjax.Editor;
 
     private userCanvas: HTMLCanvasElement;
     private referenceCanvas: HTMLCanvasElement;
 
     constructor() {
         this.codeEditor = ace.edit("code");
+        this.codeEditor.selection.on("changeSelection", () => this.onCodeSelectionChanged());
         this.codeEditor.setTheme("ace/theme/twilight");
         this.codeEditor.getSession().setMode("ace/mode/javascript");
 
@@ -19,19 +19,26 @@
     }
 
     changeLevel(levelNumber: number) {
-        this.levelNumber = levelNumber;
-        switch (this.levelNumber) {
-            case 0:
-                this.currentLevel = new Level0();
-                break;
-            
-            default:
-                // TODO: YOU WON
-                break;   
-        }
+        this.userCanvas.getContext("2d").clearRect(0, 0, this.userCanvas.width, this.userCanvas.height);
+        this.referenceCanvas.getContext("2d").clearRect(0, 0, this.referenceCanvas.width, this.referenceCanvas.height);
+        
+
+        var levelCodeElement = <HTMLIFrameElement>document.getElementById("lvl" + levelNumber);
+        this.codeEditor.setValue(levelCodeElement.contentWindow.document.body.childNodes[0].innerHTML);
+
+        this.codeEditor.session.addMarker(new Range(0, 0, 2, 0), "noneditable", "line", false);
+    }
+
+    onCodeSelectionChanged() {
+       // alert(this.codeEditor.getSelection().getCursor().row);
     }
 }
 
-window.onload = () => {
+function startGame() {
     var game = new Tanne();
-};
+}
+
+// "Content loaded" is not very reliable
+/*document.addEventListener('DOMContentLoaded', function () {
+    var game = new Tanne();
+});*/

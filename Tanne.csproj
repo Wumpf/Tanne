@@ -22,13 +22,12 @@
     <Content Include="lib\mode-javascript.js" />
     <Content Include="lib\theme-twilight.js" />
     <Content Include="lib\worker-javascript.js" />
+    <Content Include="lvl\0.js" />
     <Content Include="tanne.css" />
     <Content Include="index.html" />
     <Content Include="web.config" />
   </ItemGroup>
   <ItemGroup>
-    <TypeScriptCompile Include="ilevel.ts" />
-    <TypeScriptCompile Include="level0.ts" />
     <TypeScriptCompile Include="lib\ace.d.ts" />
     <TypeScriptCompile Include="tanne.ts" />
   </ItemGroup>

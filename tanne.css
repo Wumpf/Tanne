@@ -36,7 +36,12 @@
   display: inline-block;
 }
 
-
 canvas {
-  background: white;
+  background: #424242;
 }
+
+.noneditable{
+    position:absolute;
+    background:rgba(255,10,10,0.25);
+    z-index:20
+  }
