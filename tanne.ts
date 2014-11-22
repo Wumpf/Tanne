@@ -27,17 +27,47 @@ class Tanne {
         this.userCanvas.getContext("2d").clearRect(0, 0, this.userCanvas.width, this.userCanvas.height);
         this.referenceCanvas.getContext("2d").clearRect(0, 0, this.referenceCanvas.width, this.referenceCanvas.height);
         
-
-        var levelCodeElement = <HTMLIFrameElement>document.getElementById("lvl" + levelNumber);
-        Tanne.codeEditor.setValue(levelCodeElement.contentWindow.document.body.childNodes[0].innerHTML);
-
+        // Reset non-editable areas.
         if (typeof this.nonEditAreas !== "undefined") {
             this.nonEditAreas.forEach(s => s.remove());
         }
         this.nonEditAreas = [];
 
-        this.nonEditAreas.push(new NonEditableArea(0, 1));
-        this.nonEditAreas.push(new NonEditableArea(4, 6));
+        // Parse and add non-editable areas.
+        var levelCodeElement = <HTMLIFrameElement>document.getElementById("lvl" + levelNumber);
+        var rawLevelCode = <string>levelCodeElement.contentWindow.document.body.childNodes[0].innerHTML;
+        var nonEditStart = 0;
+        var nonEditEnd;
+        var lines = rawLevelCode.split('\n');
+        var processedCode = "";
+        var processedCodeLineNum = 0;
+        var pendingNonEditAreaStart: number[] = [];
+        var pendingNonEditAreaEnd: number[] = [];
+        for (var i = 0; i < lines.length; ++i) {
+            var marker = lines[i].indexOf("//##");
+            if (marker >= 0) {
+                if (nonEditStart < 0) {
+                    nonEditStart = processedCodeLineNum;
+                } else {
+                    nonEditEnd = processedCodeLineNum-1;
+                    pendingNonEditAreaStart.push(nonEditStart);
+                    pendingNonEditAreaEnd.push(nonEditEnd);
+                    nonEditStart = -1;
+                }
+            } else {
+                processedCode += lines[i] + "\n";
+                ++processedCodeLineNum;
+            }
+        }
+
+        // Set processed code.
+        Tanne.codeEditor.setValue(processedCode);
+
+        // Setup non editable areas.
+        for (var i = 0; i < pendingNonEditAreaStart.length; ++i)
+            this.nonEditAreas.push(new NonEditableArea(pendingNonEditAreaStart[i], pendingNonEditAreaEnd[i]));
+        if (nonEditStart > 0)
+            this.nonEditAreas.push(new NonEditableArea(nonEditStart, processedCodeLineNum));
     }
 
     onCodeEditCursorChanged() {

@@ -9,8 +9,8 @@ class NonEditableArea {
     constructor(rowStart: number, rowEnd: number) {
         this.startAnchor = Tanne.codeEditor.session.doc.createAnchor(rowStart, 0);
         this.endAnchor = Tanne.codeEditor.session.doc.createAnchor(rowEnd, 999);
-        this.endAnchor.on("change", () => this.update());
-        this.update();
+        this.endAnchor.on("change", () => this.updateHighlight());
+        this.updateHighlight();
     }
 
     intersectsRange(range: AceAjax.Range): boolean {
@@ -28,7 +28,7 @@ class NonEditableArea {
         }
     }
 
-    private update() {
+    private updateHighlight() {
         this.remove();
         this.markerRange = new Range(this.startAnchor.getPosition().row, this.startAnchor.getPosition().column,
                               this.endAnchor.getPosition().row, this.endAnchor.getPosition().column);

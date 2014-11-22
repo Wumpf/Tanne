@@ -4,9 +4,9 @@
         this.startAnchor = Tanne.codeEditor.session.doc.createAnchor(rowStart, 0);
         this.endAnchor = Tanne.codeEditor.session.doc.createAnchor(rowEnd, 999);
         this.endAnchor.on("change", function () {
-            return _this.update();
+            return _this.updateHighlight();
         });
-        this.update();
+        this.updateHighlight();
     }
     NonEditableArea.prototype.intersectsRange = function (range) {
         return this.markerRange.intersects(range);
@@ -23,7 +23,7 @@
         }
     };
 
-    NonEditableArea.prototype.update = function () {
+    NonEditableArea.prototype.updateHighlight = function () {
         this.remove();
         this.markerRange = new Range(this.startAnchor.getPosition().row, this.startAnchor.getPosition().column, this.endAnchor.getPosition().row, this.endAnchor.getPosition().column);
         this.aceMarker = Tanne.codeEditor.session.addMarker(this.markerRange, "noneditable", "fullLine", false);
@@ -57,9 +57,7 @@ var Tanne = (function () {
         this.userCanvas.getContext("2d").clearRect(0, 0, this.userCanvas.width, this.userCanvas.height);
         this.referenceCanvas.getContext("2d").clearRect(0, 0, this.referenceCanvas.width, this.referenceCanvas.height);
 
-        var levelCodeElement = document.getElementById("lvl" + levelNumber);
-        Tanne.codeEditor.setValue(levelCodeElement.contentWindow.document.body.childNodes[0].innerHTML);
-
+        // Reset non-editable areas.
         if (typeof this.nonEditAreas !== "undefined") {
             this.nonEditAreas.forEach(function (s) {
                 return s.remove();
@@ -67,8 +65,40 @@ var Tanne = (function () {
         }
         this.nonEditAreas = [];
 
-        this.nonEditAreas.push(new NonEditableArea(0, 1));
-        this.nonEditAreas.push(new NonEditableArea(4, 6));
+        // Parse and add non-editable areas.
+        var levelCodeElement = document.getElementById("lvl" + levelNumber);
+        var rawLevelCode = levelCodeElement.contentWindow.document.body.childNodes[0].innerHTML;
+        var nonEditStart = 0;
+        var nonEditEnd;
+        var lines = rawLevelCode.split('\n');
+        var processedCode = "";
+        var processedCodeLineNum = 0;
+        var pendingNonEditAreaStart = [];
+        var pendingNonEditAreaEnd = [];
+        for (var i = 0; i < lines.length; ++i) {
+            var marker = lines[i].indexOf("//##");
+            if (marker >= 0) {
+                if (nonEditStart < 0) {
+                    nonEditStart = processedCodeLineNum;
+                } else {
+                    nonEditEnd = processedCodeLineNum - 1;
+                    pendingNonEditAreaStart.push(nonEditStart);
+                    pendingNonEditAreaEnd.push(nonEditEnd);
+                    nonEditStart = -1;
+                }
+            } else {
+                processedCode += lines[i] + "\n";
+                ++processedCodeLineNum;
+            }
+        }
+
+        // Set processed code.
+        Tanne.codeEditor.setValue(processedCode);
+
+        for (var i = 0; i < pendingNonEditAreaStart.length; ++i)
+            this.nonEditAreas.push(new NonEditableArea(pendingNonEditAreaStart[i], pendingNonEditAreaEnd[i]));
+        if (nonEditStart > 0)
+            this.nonEditAreas.push(new NonEditableArea(nonEditStart, processedCodeLineNum));
     };
 
     Tanne.prototype.onCodeEditCursorChanged = function () {
