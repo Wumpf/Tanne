@@ -9,7 +9,7 @@ class Tanne {
 
     private nonEditAreas: NonEditableArea[];
 
-    private levelNumber: number = 2;
+    private levelNumber: number = -1;
     private goalError: number;
 
     constructor() {
@@ -161,7 +161,7 @@ class Tanne {
         var rect = canvas.getBoundingClientRect();
         var x = mouseOverEvent.clientX - rect.left;
         var y = mouseOverEvent.clientY - rect.top;
-        (<HTMLSpanElement>document.getElementById("hoverPos")).innerHTML = "(" + x + " " + y + ")";
+        (<HTMLSpanElement>document.getElementById("hoverPos")).innerHTML = "(" + x.toFixed(0) + " " + y.toFixed(0) + ")";
 
         var pixel = canvas.getContext("2d").getImageData(x, y, 1, 1).data;
         var hex = "#" + ("000000" + ((pixel[0] << 16) | (pixel[1] << 8) | pixel[2]).toString(16)).slice(-6);
