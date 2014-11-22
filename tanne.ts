@@ -27,12 +27,12 @@ class Tanne {
         this.userCanvas = <HTMLCanvasElement>document.getElementById("playercanvas");
         this.referenceCanvas = <HTMLCanvasElement>document.getElementById("referencecanvas");
 
-        this.nextLevel(0);
+        this.nextLevel();
     }
 
-    nextLevel(levelNumber: number) {
-        this.levelNumber = levelNumber;
-        this.loadLevelFile(levelNumber);
+    nextLevel() {
+        ++this.levelNumber;
+        this.loadLevelFile(this.levelNumber);
 
         // Reset undo.
         // Rather strange behaviour but this works.
@@ -45,7 +45,7 @@ class Tanne {
 
         // Update reference image and trigger initial draw.
         var image = new Image();
-        image.src = "lvl/" + levelNumber + ".png";
+        image.src = "lvl/" + this.levelNumber + ".png";
         image.onload = () => {
             this.referenceCanvas.getContext("2d").drawImage(image, 0, 0, this.referenceCanvas.width, this.referenceCanvas.height);
             this.updateUserCanvas();
