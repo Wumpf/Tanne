@@ -20,7 +20,6 @@
   <ItemGroup>
     <Content Include="lib\ace.js" />
     <Content Include="lib\mode-javascript.js" />
-    <Content Include="lib\theme-twilight.js" />
     <Content Include="lib\worker-javascript.js" />
     <Content Include="lvl\0.js" />
     <Content Include="tanne.css" />

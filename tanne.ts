@@ -2,11 +2,15 @@
 
 class Tanne {
     static codeEditor = ace.edit("code");
+    static numLevels = 0;
 
     private userCanvas: HTMLCanvasElement;
     private referenceCanvas: HTMLCanvasElement;
 
     private nonEditAreas: NonEditableArea[];
+
+    private levelNumber: number;
+    private goalError: number;
 
     constructor() {
         //Tanne.codeEditor.on("paste", (e: any) => e.text = ""); // pasting not allowed :P
@@ -25,6 +29,8 @@ class Tanne {
     }
 
     changeLevel(levelNumber: number) {
+        this.levelNumber = levelNumber;
+
         // Reset non-editable areas.
         if (typeof this.nonEditAreas !== "undefined") {
             this.nonEditAreas.forEach(s => s.remove());
@@ -42,6 +48,7 @@ class Tanne {
         var pendingNonEditAreaStart: number[] = [];
         var pendingNonEditAreaEnd: number[] = [];
         for (var i = 0; i < lines.length; ++i) {
+            // User area delimiter?
             var marker = lines[i].indexOf("//##");
             if (marker >= 0) {
                 if (nonEditStart < 0) {
@@ -53,8 +60,15 @@ class Tanne {
                     nonEditStart = -1;
                 }
             } else {
-                processedCode += lines[i] + "\n";
-                ++processedCodeLineNum;
+                // direct command line?
+                marker = lines[i].indexOf("//**");
+                if (marker >= 0) {
+                    eval(lines[i].substr(4));
+                } else {
+                    // Normal code.
+                    processedCode += lines[i] + "\n";
+                    ++processedCodeLineNum;
+                }
             }
         }
 
@@ -102,8 +116,9 @@ class Tanne {
     }
 
     updateUserCanvas() {
-        var drawFunction = new Function("canvas", Tanne.codeEditor.getValue());
-        drawFunction(this.userCanvas);
+        var drawFunction: any = new Function("canvas", Tanne.codeEditor.getValue());
+        var userFunction = new drawFunction(this.userCanvas);
+        (<HTMLSpanElement>document.getElementById("errorGoal")).innerHTML = (this.goalError * 100).toFixed(1) + "%";
 
         // Compute normalized root-mean-square deviation
         var pixelsUserCanvas = this.userCanvas.getContext("2d").getImageData(0, 0, this.userCanvas.width, this.userCanvas.height).data;
@@ -119,6 +134,15 @@ class Tanne {
         nrmsd = Math.sqrt(nrmsd);
         nrmsd /= 255;
         (<HTMLSpanElement>document.getElementById("imageError")).innerHTML = (nrmsd * 100).toFixed(1) + "%";
+
+
+        if (this.goalError >= nrmsd)
+            this.winLevel();
+    }
+
+    winLevel() {
+        alert("You won!");
+        this.changeLevel(this.levelNumber + 1);
     }
 }
 

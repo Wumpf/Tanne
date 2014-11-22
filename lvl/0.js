@@ -1,5 +1,4 @@
-// You can not edit the red area!
-
+//** this.goalError = 0.05;
 // Useful for all kind of positioning!
 function Pos(x, y) {
   this.x = x; this.y = y;
@@ -43,7 +42,7 @@ function drawTree() {
   // This is where you can modify code!
   // Try to match the reference image as accurately as possible and then press the refresh button.
   draw.greenTriangle(new Pos(150, 0), new Pos(190, 85), new Pos(110, 85));
-  draw.greenTriangle(new Pos(150, 50), new Pos(225, 175), new Pos(75, 175));
+  // HERE may be something missing!
   draw.greenTriangle(new Pos(150, 100), new Pos(250, 250), new Pos(50, 250));
   draw.brownRectangle(new Pos(125, 250), 50, 50);
   //##

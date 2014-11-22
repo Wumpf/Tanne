@@ -60,3 +60,6 @@ canvas {
     position: absolute;
     z-index: 20;
 }
+.levelFile {
+  display: none;
+}
