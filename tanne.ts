@@ -67,6 +67,10 @@ class Tanne {
         if (nonEditStart > 0)
             this.nonEditAreas.push(new NonEditableArea(nonEditStart, processedCodeLineNum));
 
+        // Set cursor to a meaningful.
+        Tanne.codeEditor.selection.moveCursorToPosition(new function () { this.row = pendingNonEditAreaEnd[pendingNonEditAreaEnd.length - 1] + 1; this.column = 1; });
+        Tanne.codeEditor.selection.moveCursorLineEnd();
+
         // Reset undo.
         // Rather strange behaviour but this works.
         // See: http://japhr.blogspot.de/2012/10/ace-undomanager-and-setvalue.html
