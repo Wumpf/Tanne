@@ -25,10 +25,13 @@
     <Content Include="lvl\0.js" />
     <Content Include="tanne.css" />
     <Content Include="index.html" />
-    <Content Include="web.config" />
+    <Content Include="web.config">
+      <SubType>Designer</SubType>
+    </Content>
   </ItemGroup>
   <ItemGroup>
     <TypeScriptCompile Include="lib\ace.d.ts" />
+    <TypeScriptCompile Include="noneditablearea.ts" />
     <TypeScriptCompile Include="tanne.ts" />
   </ItemGroup>
   <ItemGroup>

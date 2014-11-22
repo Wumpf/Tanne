@@ -1,16 +1,21 @@
-﻿var Range = ace.require("ace/range").Range;
+﻿Range = ace.require("ace/range").Range;
 
 class Tanne {
-    private codeEditor: AceAjax.Editor;
+    static codeEditor = ace.edit("code");
 
     private userCanvas: HTMLCanvasElement;
     private referenceCanvas: HTMLCanvasElement;
 
+    private nonEditAreas: NonEditableArea[];
+
+
     constructor() {
-        this.codeEditor = ace.edit("code");
-        this.codeEditor.selection.on("changeSelection", () => this.onCodeSelectionChanged());
-        this.codeEditor.setTheme("ace/theme/twilight");
-        this.codeEditor.getSession().setMode("ace/mode/javascript");
+        Tanne.codeEditor.on("paste", (e: any) => e.text = ""); // pasting not allowed :P
+        Tanne.codeEditor.selection.on("changeCursor", () => this.onCodeEditCursorChanged());
+        Tanne.codeEditor.selection.on("changeSelection", () => this.onCodeEditCursorChanged());
+        
+        Tanne.codeEditor.setTheme("ace/theme/twilight");
+        Tanne.codeEditor.getSession().setMode("ace/mode/javascript");
 
         this.userCanvas = <HTMLCanvasElement>document.getElementById("playercanvas");
         this.referenceCanvas = <HTMLCanvasElement>document.getElementById("referencecanvas");
@@ -24,13 +29,26 @@ class Tanne {
         
 
         var levelCodeElement = <HTMLIFrameElement>document.getElementById("lvl" + levelNumber);
-        this.codeEditor.setValue(levelCodeElement.contentWindow.document.body.childNodes[0].innerHTML);
+        Tanne.codeEditor.setValue(levelCodeElement.contentWindow.document.body.childNodes[0].innerHTML);
 
-        this.codeEditor.session.addMarker(new Range(0, 0, 2, 0), "noneditable", "line", false);
+        if (typeof this.nonEditAreas !== "undefined") {
+            this.nonEditAreas.forEach(s => s.remove());
+        }
+        this.nonEditAreas = [];
+
+        this.nonEditAreas.push(new NonEditableArea(0, 1));
+        this.nonEditAreas.push(new NonEditableArea(4, 6));
     }
 
-    onCodeSelectionChanged() {
-       // alert(this.codeEditor.getSelection().getCursor().row);
+    onCodeEditCursorChanged() {
+        if (typeof this.nonEditAreas === "undefined") {
+            return;
+        }
+        Tanne.codeEditor.setReadOnly(false);
+        this.nonEditAreas.forEach(s => {
+            if (s.intersectsRange(Tanne.codeEditor.getSelectionRange()) || s.intersectsPosition(Tanne.codeEditor.getCursorPosition()))
+                Tanne.codeEditor.setReadOnly(true);
+        });
     }
 }
 

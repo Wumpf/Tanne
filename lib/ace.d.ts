@@ -660,7 +660,7 @@ declare module AceAjax {
          * @param type Identify the type of the marker
          * @param inFront Set to `true` to establish a front marker
         **/
-        addMarker(range: Range, clazz: string, type: string, inFront: boolean);
+        addMarker(range: Range, clazz: string, type: string, inFront: boolean): number;
 
         /**
          * Adds a dynamic marker to the session.
