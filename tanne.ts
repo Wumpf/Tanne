@@ -1,4 +1,4 @@
-﻿Range = ace.require("ace/range").Range;
+﻿var Range = ace.require("ace/range").Range;
 
 class Tanne {
     static codeEditor = ace.edit("code");
@@ -8,9 +8,8 @@ class Tanne {
 
     private nonEditAreas: NonEditableArea[];
 
-
     constructor() {
-        Tanne.codeEditor.on("paste", (e: any) => e.text = ""); // pasting not allowed :P
+        //Tanne.codeEditor.on("paste", (e: any) => e.text = ""); // pasting not allowed :P
         Tanne.codeEditor.selection.on("changeCursor", () => this.onCodeEditCursorChanged());
         Tanne.codeEditor.selection.on("changeSelection", () => this.onCodeEditCursorChanged());
         
@@ -68,6 +67,12 @@ class Tanne {
             this.nonEditAreas.push(new NonEditableArea(pendingNonEditAreaStart[i], pendingNonEditAreaEnd[i]));
         if (nonEditStart > 0)
             this.nonEditAreas.push(new NonEditableArea(nonEditStart, processedCodeLineNum));
+
+        // Reset undo.
+        // Rather strange behaviour but this works.
+        // See: http://japhr.blogspot.de/2012/10/ace-undomanager-and-setvalue.html
+        var UndoManager = ace.require("ace/undomanager").UndoManager;
+        Tanne.codeEditor.getSession().setUndoManager(new UndoManager());
     }
 
     onCodeEditCursorChanged() {
