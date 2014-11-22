@@ -1,56 +1,62 @@
-﻿body {
-  font-family: 'Segoe UI', sans-serif;
-  color: white;
-  overflow: hidden;
-  background: black;
+﻿
+body {
+    background: none repeat scroll 0 0 black;
+    color: white;
+    font-family: "Segoe UI",sans-serif;
+    overflow: hidden;
 }
-
 #editor {
-  bottom: 0;
-  left: 0;
-  margin-right: 310px;
-  position: absolute;
-  right: 0;
-  top: 0;
-  width: auto;
+    bottom: 0;
+    left: 0;
+    margin-right: 500px;
+    position: absolute;
+    right: 0;
+    top: 0;
+    width: auto;
 }
-
-#editor div input {
-  float: left;
-  display: inline-block;
+#midbar {
+    display: inline-block;
+    float: right;
+    height: auto;
+    margin-right: 310px;
+    margin-top: 100px;
+    width: 170px;
 }
-
+#midbar div {
+    display: inline-block;
+    text-align: center;
+    width: 100%;
+}
 #code {
-  margin: 0;
-  position: absolute;
-  top: 40px;
-  right: 0;
-  bottom: 0;
-  left: 0;
+    bottom: 0;
+    left: 0;
+    margin: 0;
+    position: absolute;
+    right: 0;
+    top: 0;
 }
-
 #refreshbutton {
-  margin: 5px;
+    height: 40px;
+    width: 100%;
 }
-
 #display {
-  margin-right: 5px;
-  position: absolute;
-  right: 0;
-  display: inline-block;
+    display: inline-block;
+    margin-right: 5px;
+    position: absolute;
+    right: 0;
+    height: 100%;
+    overflow-y: auto;
+    overflow-x: hidden;
 }
-
 #display span {
-  clear: both;
-  display: inline-block;
+    clear: both;
+    display: inline-block;
 }
-
 canvas {
-  background: #424242;
+    background: none repeat scroll 0 0 #424242;
 }
-
 .noneditable {
-  position: absolute;
-  background: rgba(255,10,10,0.25);
-  z-index: 20;
+    background: none repeat scroll 0 0 rgba(255, 10, 10, 0.25);
+    position: absolute;
+    z-index: 20;
 }
