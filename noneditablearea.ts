@@ -6,6 +6,10 @@ class NonEditableArea {
     private startAnchor: AceAjax.Anchor;
     private endAnchor: AceAjax.Anchor;
 
+    get lowerLine(): number {
+        return this.endAnchor.getPosition().row;
+    }
+
     constructor(rowStart: number, rowEnd: number) {
         this.startAnchor = Tanne.codeEditor.session.doc.createAnchor(rowStart, 0);
         this.endAnchor = Tanne.codeEditor.session.doc.createAnchor(rowEnd, 999);

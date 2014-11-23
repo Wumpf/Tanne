@@ -19,7 +19,9 @@ class Tanne {
     constructor() {
         //Tanne.codeEditor.on("paste", (e: any) => e.text = ""); // pasting not allowed :P
         Tanne.codeEditor.setShowPrintMargin(false);
-        
+
+        Tanne.codeEditor.getSession().on("change", (evt) => this.onCodeEditChange(evt.data));
+
         Tanne.codeEditor.selection.on("changeCursor", () => this.onCodeEditCursorChanged());
         Tanne.codeEditor.selection.on("changeSelection", () => this.onCodeEditCursorChanged());
         
@@ -129,6 +131,19 @@ class Tanne {
             if (s.intersectsRange(Tanne.codeEditor.getSelectionRange()) || s.intersectsPosition(Tanne.codeEditor.getCursorPosition()))
                 Tanne.codeEditor.setReadOnly(true);
         });
+    }
+
+    onCodeEditChange(evt: any) {
+        // It is not allowed to remove \n if the cursor is right after a non-editable area.
+        if (evt.action == "removeText" && (<string>evt.text).indexOf("\n") != -1) {
+            for (var i = 0; i < this.nonEditAreas.length; ++i) {
+                if (this.nonEditAreas[i].lowerLine == Tanne.codeEditor.getCursorPosition().row) {
+                    Tanne.codeEditor.getSession().insert(Tanne.codeEditor.getCursorPosition(), "\n");
+                    Tanne.codeEditor.moveCursorToPosition(new function() { this.row = Tanne.codeEditor.getCursorPosition().row + 1; this.column = 0; });
+                    break;
+                }
+            }
+        }
     }
 
     updateUserCanvas() {
