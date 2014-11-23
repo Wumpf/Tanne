@@ -10,6 +10,15 @@ h1 {
   margin-left: 10px;
   margin-top: 5px;
 }
+footer {
+  bottom: 0;
+  font-size: 12px;
+  height: 20px;
+  left: 0;
+  position: absolute;
+  text-align: center;
+  width: 100%;
+}
 #editor {
     bottom: 0;
     left: 0;
@@ -32,8 +41,10 @@ h1 {
     text-align: center;
     width: 100%;
 }
+#errorInfo {
+}
 #code {
-    bottom: 0;
+    bottom: 20px;
     left: 0;
     margin: 0;
     position: absolute;
