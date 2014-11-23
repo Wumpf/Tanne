@@ -1,0 +1,61 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Tanne.</title>
+  <link href='http://fonts.googleapis.com/css?family=Rambla' rel='stylesheet' type='text/css'>
+  <link rel="stylesheet" href="tanne.css" type="text/css" />
+</head>
+<body>
+  <div id="editor">
+    <h1 id="levelName">Loading!</h1>
+    <pre id="code">ooooops!</pre>
+    <footer>
+      <a href="http://acagamics.cs.ovgu.de/kultur/game-jams/">AcaGameJam</a> <img src="microschorsch.png"> Game by <b>Andreas Reich</b>.
+      <a href="https://github.com/wumpf/tanne">Fork me on GitHub!</a>
+      Uses <a href="http://ace.c9.io">Ace Editor</a>.
+      Thanks to Bastian for CSS coaching and desk neighbours <a href="http://jojendersie.de/">Jo</a> &amp; Tim.
+    </footer>
+  </div>
+  <div id="midbar">
+    <input type="button" id="refreshbutton" value="Refresh"><br>
+    <div>
+      <div id="errorInfo">
+        <span>Image Error: </span><span id="imageError">?</span><br>
+        <span>Goal: </span><span id="errorGoal">?</span>
+      </div>
+      <br><br>
+      <b><span>Hover</span></b><br>
+      <span>Position: </span><span id="hoverPos">-</span><br>
+      <span>Color: </span><span id="hoverCol">-</span><br>
+      <b><span>Click</span></b><br>
+      <span>Position: </span><span id="clickPos">-</span><br>
+      <span>Color: </span><span id="clickCol">-</span>
+    </div>
+  </div>
+  <div id="display">
+    <span class="displaydesc">Yours:</span><br>
+    <canvas id="playercanvas" width=300 height=300></canvas><br>
+    <span class="displaydesc">Reference:</span><br>
+    <canvas id="referencecanvas" width=300 height=300></canvas>
+  </div>
+
+  <div id="message">
+    <span id="messageText0"></span><br>
+    <span id="messageText1"></span><br>
+    <input id="messageButtonOK" type="button" value="Ok"/>
+  </div>
+
+  <script src="lib/ace.js" type="text/javascript" charset="utf-8"></script>
+  <script src="tanne.js"></script>
+
+  <iframe id="lvl0" src="lvl/0.js" class="levelFile" onload="startGame();"></iframe>
+  <iframe id="lvl1" src="lvl/1.js" class="levelFile"></iframe>
+  <iframe id="lvl2" src="lvl/2.js" class="levelFile"></iframe>
+  <iframe id="lvl3" src="lvl/3.js" class="levelFile"></iframe>
+  <iframe id="lvl4" src="lvl/4.js" class="levelFile"></iframe>
+  <iframe id="lvl5" src="lvl/5.js" class="levelFile"></iframe>
+  <iframe id="lvl6" src="lvl/6.js" class="levelFile"></iframe>
+  <iframe id="lvl7" src="lvl/7.js" class="levelFile"></iframe>
+</body>
+</html>
