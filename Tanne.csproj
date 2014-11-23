@@ -32,6 +32,7 @@
     <TypeScriptCompile Include="lib\ace.d.ts" />
     <TypeScriptCompile Include="noneditablearea.ts" />
     <TypeScriptCompile Include="tanne.ts" />
+    <TypeScriptCompile Include="utils.ts" />
   </ItemGroup>
   <ItemGroup>
     <None Include="web.Debug.config">
