@@ -1,4 +1,6 @@
-﻿var Range = ace.require("ace/range").Range;
+﻿/// <reference path="utils.ts"/>
+
+var Range = ace.require("ace/range").Range;
 
 class Tanne {
     static codeEditor = ace.edit("code");
@@ -70,7 +72,7 @@ class Tanne {
 
         // Parse and add non-editable areas.
         var levelCodeElement = <HTMLIFrameElement>document.getElementById("lvl" + levelNumber);
-        var rawLevelCode = <string>levelCodeElement.contentWindow.document.body.childNodes[0].innerHTML;
+        var rawLevelCode = Utils.decodeHTML(<string>levelCodeElement.contentWindow.document.body.childNodes[0].innerHTML);
         var nonEditStart = 0;
         var nonEditEnd = -1;
         var lines = rawLevelCode.split('\n');
