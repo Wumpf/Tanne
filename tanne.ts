@@ -29,6 +29,8 @@ class Tanne {
         Tanne.codeEditor.getSession().setMode("ace/mode/javascript");
         Tanne.codeEditor.getSession().setTabSize(2);
 
+        (<HTMLDivElement>document.getElementById("message")).hidden = true;
+
         (<HTMLInputElement>document.getElementById("refreshbutton")).onclick = () => this.updateUserCanvas();
         this.userCanvas = <HTMLCanvasElement>document.getElementById("playercanvas");
         this.userCanvas.onmousemove = (ev) => this.canvasMouseOver(this.userCanvas, ev);
@@ -151,7 +153,7 @@ class Tanne {
         var userCode = Tanne.codeEditor.getValue();
         for (var i = 0; i < Tanne.illegalKeywords.length; ++i) {
             if (userCode.indexOf(Tanne.illegalKeywords[i]) > 0) {
-                alert("\"" + Tanne.illegalKeywords[i] + "\" not allowed!");
+                this.displayMessage("\"" + Tanne.illegalKeywords[i] + "\" not allowed!");
                 return;
             }
         }
@@ -181,9 +183,22 @@ class Tanne {
             this.winLevel();
     }
 
+    displayMessage(messageText0: string, messageText1: string = "", functionOnContinue: () => void = () => { }) {
+        (<HTMLDivElement>document.getElementById("message")).hidden = false;
+        (<HTMLSpanElement>document.getElementById("messageText0")).innerHTML = messageText0;
+        (<HTMLSpanElement>document.getElementById("messageText1")).innerHTML = messageText1;
+
+        (<HTMLInputElement>document.getElementById("messageButtonOK")).onclick = () => {
+            (<HTMLDivElement>document.getElementById("message")).hidden = true;
+            functionOnContinue();
+        };
+    }
+
     winLevel() {
-        alert("You won!");
-        this.nextLevel();
+        this.displayMessage("You did it!", "Continue to the next level.", () => this.nextLevel());
+    }
+
+    messageBoxContinue() {
     }
 
     private canvasMouseOver(canvas: HTMLCanvasElement, mouseOverEvent: MouseEvent) {
