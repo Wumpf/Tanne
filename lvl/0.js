@@ -1,5 +1,5 @@
-//** this.goalError = 0.01;
-//** this.levelName = "1 - A Missing Piece";
+//** this.goalError = 0.02;
+//** this.levelName = "7 - ";
 // Useful for all kind of positioning!
 function Pos(x, y) {
   this.x = x; this.y = y;
@@ -35,18 +35,14 @@ function Draw() {
 
 // This is your friend!
 var draw = new Draw();
-// ... but you are not allowed to access the canvas directly ;)
-canvas = null;
+canvas = null; // ... but you are not allowed to access the canvas directly ;)
 
 function drawTree() {
-  //##
   // This is where you can modify code!
-  // Try to match the reference image as accurately as possible and then press the refresh button.
+  // Try to match the reference image as good as possible. Press refresh to see your changes.
   draw.greenTriangle(new Pos(150, 0), new Pos(190, 85), new Pos(110, 85));
   // HERE may be something missing!
   draw.greenTriangle(new Pos(150, 100), new Pos(250, 250), new Pos(50, 250));
   draw.brownRectangle(new Pos(125, 250), 50, 50);
-  //##
 }
-
 drawTree();
