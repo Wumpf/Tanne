@@ -57,7 +57,7 @@ class Tanne {
         Tanne.codeEditor.getSession().setUndoManager(new UndoManager());
 
         var levelFileRequest = new XMLHttpRequest();
-        levelFileRequest.open('GET', "/lvl/" + this.levelNumber + ".js");
+        levelFileRequest.open('GET', "lvl/" + this.levelNumber + ".js");
         levelFileRequest.onreadystatechange = () => {
             this.parseLevel(levelFileRequest.responseText);
 
