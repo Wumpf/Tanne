@@ -46,7 +46,9 @@ class Tanne {
 
     nextLevel() {
         ++this.levelNumber;
-        this.loadLevelFile(this.levelNumber);
+
+        // Reset code
+        Tanne.codeEditor.setValue("Loading.");
 
         // Reset undo.
         // Rather strange behaviour but this works.
@@ -54,16 +56,24 @@ class Tanne {
         var UndoManager = ace.require("ace/undomanager").UndoManager;
         Tanne.codeEditor.getSession().setUndoManager(new UndoManager());
 
-        // Update reference image and trigger initial draw.
-        var image = new Image();
-        image.onload = () => {
-            this.referenceCanvas.getContext("2d").drawImage(image, 0, 0, this.referenceCanvas.width, this.referenceCanvas.height);
-            this.updateUserCanvas();
-        };
-        image.src = "lvl/" + this.levelNumber + ".png";
+        var levelFileRequest = new XMLHttpRequest();
+        levelFileRequest.open('GET', "/lvl/" + this.levelNumber + ".js");
+        levelFileRequest.onreadystatechange = () => {
+            this.parseLevel(levelFileRequest.responseText);
+
+            // Update reference image and trigger initial draw.
+            var image = new Image();
+            image.onload = () => {
+                this.referenceCanvas.getContext("2d").drawImage(image, 0, 0, this.referenceCanvas.width, this.referenceCanvas.height);
+                this.updateUserCanvas();
+            };
+            image.src = "lvl/" + this.levelNumber + ".png";
+        }
+        levelFileRequest.send();
+
     }
 
-    private loadLevelFile(levelNumber: number) {
+    private parseLevel(rawLevelCode: string) {
         // Reset non-editable areas.
         if (typeof this.nonEditAreas !== "undefined") {
             this.nonEditAreas.forEach(s => s.remove());
@@ -71,8 +81,6 @@ class Tanne {
         this.nonEditAreas = [];
 
         // Parse and add non-editable areas.
-        var levelCodeElement = <HTMLIFrameElement>document.getElementById("lvl" + levelNumber);
-        var rawLevelCode = Utils.decodeHTML(<string>levelCodeElement.contentWindow.document.body.childNodes[0].innerHTML);
         var nonEditStart = 0;
         var nonEditEnd = -1;
         var lines = rawLevelCode.split('\n');
@@ -220,6 +228,6 @@ class Tanne {
     }
 }
 
-function startGame() {
+window.onload = function () {
     var game = new Tanne();
-}
+};
