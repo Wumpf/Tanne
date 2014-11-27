@@ -52,12 +52,14 @@ var Utils;
     }
     Utils.decodeHTML = decodeHTML;
 })(Utils || (Utils = {}));
+/// <reference path="utils.ts"/>
 var Range = ace.require("ace/range").Range;
 
 var Tanne = (function () {
     function Tanne() {
         var _this = this;
         this.levelNumber = -1;
+        //Tanne.codeEditor.on("paste", (e: any) => e.text = ""); // pasting not allowed :P
         Tanne.codeEditor.setShowPrintMargin(false);
 
         Tanne.codeEditor.getSession().on("change", function (evt) {
@@ -100,20 +102,34 @@ var Tanne = (function () {
     Tanne.prototype.nextLevel = function () {
         var _this = this;
         ++this.levelNumber;
-        this.loadLevelFile(this.levelNumber);
 
+        // Reset code
+        Tanne.codeEditor.setValue("Loading.");
+
+        // Reset undo.
+        // Rather strange behaviour but this works.
+        // See: http://japhr.blogspot.de/2012/10/ace-undomanager-and-setvalue.html
         var UndoManager = ace.require("ace/undomanager").UndoManager;
         Tanne.codeEditor.getSession().setUndoManager(new UndoManager());
 
-        var image = new Image();
-        image.onload = function () {
-            _this.referenceCanvas.getContext("2d").drawImage(image, 0, 0, _this.referenceCanvas.width, _this.referenceCanvas.height);
-            _this.updateUserCanvas();
+        var levelFileRequest = new XMLHttpRequest();
+        levelFileRequest.open('GET', "/lvl/" + this.levelNumber + ".js");
+        levelFileRequest.onreadystatechange = function () {
+            _this.parseLevel(levelFileRequest.responseText);
+
+            // Update reference image and trigger initial draw.
+            var image = new Image();
+            image.onload = function () {
+                _this.referenceCanvas.getContext("2d").drawImage(image, 0, 0, _this.referenceCanvas.width, _this.referenceCanvas.height);
+                _this.updateUserCanvas();
+            };
+            image.src = "lvl/" + _this.levelNumber + ".png";
         };
-        image.src = "lvl/" + this.levelNumber + ".png";
+        levelFileRequest.send();
     };
 
-    Tanne.prototype.loadLevelFile = function (levelNumber) {
+    Tanne.prototype.parseLevel = function (rawLevelCode) {
+        // Reset non-editable areas.
         if (typeof this.nonEditAreas !== "undefined") {
             this.nonEditAreas.forEach(function (s) {
                 return s.remove();
@@ -121,8 +137,7 @@ var Tanne = (function () {
         }
         this.nonEditAreas = [];
 
-        var levelCodeElement = document.getElementById("lvl" + levelNumber);
-        var rawLevelCode = Utils.decodeHTML(levelCodeElement.contentWindow.document.body.childNodes[0].innerHTML);
+        // Parse and add non-editable areas.
         var nonEditStart = 0;
         var nonEditEnd = -1;
         var lines = rawLevelCode.split('\n');
@@ -131,6 +146,7 @@ var Tanne = (function () {
         var pendingNonEditAreaStart = [];
         var pendingNonEditAreaEnd = [];
         for (var i = 0; i < lines.length; ++i) {
+            // User area delimiter?
             var marker = lines[i].indexOf("//##");
             if (marker >= 0) {
                 if (nonEditStart < 0) {
@@ -142,18 +158,22 @@ var Tanne = (function () {
                     nonEditStart = -1;
                 }
             } else {
+                // direct command line?
                 marker = lines[i].indexOf("//**");
                 if (marker >= 0) {
                     eval(lines[i].substr(4));
                 } else {
+                    // Normal code.
                     processedCode += lines[i] + "\n";
                     ++processedCodeLineNum;
                 }
             }
         }
 
+        // Set processed code.
         Tanne.codeEditor.setValue(processedCode);
 
+        // Set header.
         document.getElementById("levelName").innerHTML = this.levelName;
 
         for (var i = 0; i < pendingNonEditAreaStart.length; ++i)
@@ -161,6 +181,7 @@ var Tanne = (function () {
         if (nonEditStart > 0)
             this.nonEditAreas.push(new NonEditableArea(nonEditStart, processedCodeLineNum));
 
+        // Set cursor to a meaningful position.
         Tanne.codeEditor.selection.clearSelection();
         Tanne.codeEditor.selection.moveCursorToPosition(new function () {
             this.row = pendingNonEditAreaEnd[pendingNonEditAreaEnd.length - 1] + 1;
@@ -184,6 +205,7 @@ var Tanne = (function () {
     };
 
     Tanne.prototype.onCodeEditChange = function (evt) {
+        // It is not allowed to remove \n if the cursor is right after a non-editable area.
         if (evt.action == "removeText" && evt.text.indexOf("\n") != -1) {
             for (var i = 0; i < this.nonEditAreas.length; ++i) {
                 if (this.nonEditAreas[i].lowerLine == Tanne.codeEditor.getCursorPosition().row) {
@@ -199,6 +221,7 @@ var Tanne = (function () {
     };
 
     Tanne.prototype.updateUserCanvas = function () {
+        // Validate user code.
         var userCode = Tanne.codeEditor.getValue();
         for (var i = 0; i < Tanne.illegalKeywords.length; ++i) {
             if (userCode.indexOf(Tanne.illegalKeywords[i]) > 0) {
@@ -207,10 +230,12 @@ var Tanne = (function () {
             }
         }
 
+        // Execute user code.
         var drawFunction = new Function("canvas", userCode);
         var userFunction = new drawFunction(this.userCanvas);
         document.getElementById("errorGoal").innerHTML = (this.goalError * 100).toFixed(1) + "%";
 
+        // Compute normalized root-mean-square deviation
         var pixelsUserCanvas = this.userCanvas.getContext("2d").getImageData(0, 0, this.userCanvas.width, this.userCanvas.height).data;
         var pixelsReferenceCanvas = this.referenceCanvas.getContext("2d").getImageData(0, 0, this.referenceCanvas.width, this.referenceCanvas.height).data;
         var nrmsd = 0.0;
@@ -274,6 +299,7 @@ var Tanne = (function () {
     return Tanne;
 })();
 
-function startGame() {
+window.onload = function () {
     var game = new Tanne();
-}
+};
+//# sourceMappingURL=tanne.js.map
